@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>11-Char Password Generator</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111827;
+      --card-2: #182235;
+      --border: #26334d;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #818cf8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 14px 48px;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.12), transparent 35%),
+        radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(24, 34, 53, 0.95));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      margin-bottom: 18px;
+    }
+
+    .hero-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .badge {
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #7dd3fc;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .control-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .control-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-radius: 7px;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: #061322;
+    }
+
+    .date-input-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .date-prefix {
+      padding: 9px 11px;
+      background: #131c2e;
+      color: var(--accent);
+      font-weight: 800;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      border-right: 1px solid var(--border);
+      user-select: none;
+    }
+
+    .date-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      padding: 9px 11px;
+      font-size: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      outline: none;
+    }
+
+    .date-input:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .status-note {
+      margin-top: 7px;
+      font-size: 11.5px;
+      color: var(--muted);
+      min-height: 16px;
+    }
+
+    .status-note.warn {
+      color: var(--warning);
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 4px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 11px;
+      padding: 11px 16px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.08s ease, filter 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .btn-generate {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #06101e;
+    }
+
+    .btn-copy-all {
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .preview-pill {
+      font-size: 12.5px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .preview-pill span {
+      color: #7dd3fc;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 10px;
+    }
+
+    .pw-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13.5px;
+    }
+
+    .pw-card:hover {
+      border-color: var(--accent);
+      background: #142238;
+      transform: translateY(-1px);
+    }
+
+    .pw-card.copied {
+      border-color: var(--success);
+      background: rgba(34, 197, 94, 0.14);
+      color: #86efac;
+    }
+
+    .pw-num {
+      font-size: 11px;
+      color: var(--muted);
+      user-select: none;
+    }
+
+    .pw-val {
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      user-select: all;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--success);
+      color: #052e16;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 11px 16px;
+      border-radius: 11px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="brand">
+          <h1>Smart 11-Character Password Generator</h1>
+          <p>ক্লিক করলেই কপি হবে • Auto আজকের তারিখ অথবা Manual তারিখ সেট করার সুবিধা</p>
+        </div>
+        <div class="badge" id="activeSuffixBadge">Suffix: @26 • Length: 11</div>
+      </div>
+
+      <div class="controls">
+        <div class="control-box">
+          <label class="control-label">Date Mode</label>
+          <div class="mode-switch">
+            <button type="button" class="mode-btn active" id="autoModeBtn">Auto Date</button>
+            <button type="button" class="mode-btn" id="manualModeBtn">Manual Date</button>
+          </div>
+          <div class="status-note" id="modeHint">আজকের তারিখের দিন অনুযায়ী অটো সেট হচ্ছে</div>
+        </div>
+
+        <div class="control-box">
+          <label class="control-label" for="dateSuffixInput">@ এর পরের অংশ (Max 9 chars)</label>
+          <div class="date-input-wrap">
+            <span class="date-prefix">@</span>
+            <input
+              type="text"
+              id="dateSuffixInput"
+              class="date-input"
+              maxlength="9"
+              placeholder="যেমন: 26 বা 2611"
+            />
+          </div>
+          <div class="status-note" id="lengthNote">Random অংশ: 8 chars + @26 = 11 chars</div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="btn-group">
+          <button type="button" class="btn btn-generate" id="generateBtn">Generate 100 Passwords</button>
+          <button type="button" class="btn btn-copy-all" id="copyAllBtn">Copy All 100</button>
+        </div>
+        <div class="preview-pill" id="formatPreview">Format: <span>[8 Random] + @26</span></div>
+      </div>
+    </section>
+
+    <main class="grid" id="passwordGrid"></main>
+  </div>
+
+  <div class="toast" id="toast">Copied!</div>
+
+  <script>
+    const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    const TOTAL_LENGTH = 11;
+
+    let isManual = false;
+    let passwords = [];
+
+    const autoModeBtn = document.getElementById("autoModeBtn");
+    const manualModeBtn = document.getElementById("manualModeBtn");
+    const dateSuffixInput = document.getElementById("dateSuffixInput");
+    const modeHint = document.getElementById("modeHint");
+    const lengthNote = document.getElementById("lengthNote");
+    const activeSuffixBadge = document.getElementById("activeSuffixBadge");
+    const formatPreview = document.getElementById("formatPreview");
+    const generateBtn = document.getElementById("generateBtn");
+    const copyAllBtn = document.getElementById("copyAllBtn");
+    const passwordGrid = document.getElementById("passwordGrid");
+    const toast = document.getElementById("toast");
+
+    function getAutoDay() {
+      return String(new Date().getDate()).padStart(2, "0");
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function copyToClipboard(text, successMessage) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+          .then(() => showToast(successMessage))
+          .catch(() => fallbackCopy(text, successMessage));
+      } else {
+        fallbackCopy(text, successMessage);
+      }
+    }
+
+    function fallbackCopy(text, successMessage) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      showToast(successMessage);
+    }
+
+    function getCleanTail() {
+      // ইউজার @ লিখলে শুরু থেকে সেটি বাদ দিয়ে বাকি অংশ নেয়
+      let raw = dateSuffixInput.value.replace(/^@+/, "").trim();
+      if (raw.length > 9) {
+        raw = raw.slice(0, 9);
+      }
+      return raw;
+    }
+
+    function updateUIState() {
+      if (!isManual) {
+        const todayDay = getAutoDay();
+        dateSuffixInput.value = todayDay;
+        dateSuffixInput.disabled = true;
+        autoModeBtn.classList.add("active");
+        manualModeBtn.classList.remove("active");
+        modeHint.textContent = `Auto চালু: আজকের তারিখ অনুযায়ী @${todayDay} সেট করা আছে`;
+        modeHint.classList.remove("warn");
+      } else {
+        dateSuffixInput.disabled = false;
+        manualModeBtn.classList.add("active");
+        autoModeBtn.classList.remove("active");
+        modeHint.textContent = "Manual চালু: @ এর পর নিজের মতো তারিখ বা কোড লিখুন";
+        modeHint.classList.remove("warn");
+      }
+
+      const tail = getCleanTail();
+      const suffix = "@" + tail; // অন্তত '@' সহ ১ ক্যারেক্টার থাকে
+      const randomLen = Math.max(0, TOTAL_LENGTH - suffix.length);
+
+      activeSuffixBadge.textContent = `Suffix: ${suffix} • Length: ${TOTAL_LENGTH}`;
+      formatPreview.innerHTML = `Format: <span>[${randomLen} Random] + ${suffix}</span> = ${TOTAL_LENGTH} chars`;
+
+      if (randomLen === 0) {
+        lengthNote.textContent = "সতর্কতা: Suffix খুব বড় হওয়ায় 0টি random ক্যারেক্টার থাকছে";
+        lengthNote.classList.add("warn");
+      } else {
+        lengthNote.textContent = `Random অংশ: ${randomLen} chars + ${suffix} (${suffix.length} chars) = ${TOTAL_LENGTH} chars`;
+        lengthNote.classList.remove("warn");
+      }
+
+      return { randomLen, suffix };
+    }
+
+    function buildSinglePassword(randomLen, suffix) {
+      let prefix = "";
+      if (randomLen > 0) {
+        const arr = new Uint32Array(randomLen);
+        crypto.getRandomValues(arr);
+        for (let i = 0; i < randomLen; i++) {
+          prefix += CHARS[arr[i] % CHARS.length];
+        }
+      }
+      // মোট দৈর্ঘ্য ঠিক ১১ ক্যারেক্টার রাখার নিশ্চয়তা
+      const combined = prefix + suffix;
+      return combined.slice(0, TOTAL_LENGTH);
+    }
+
+    function generatePasswords() {
+      const { randomLen, suffix } = updateUIState();
+      const uniqueSet = new Set();
+
+      // ইউনিক পাসওয়ার্ড তৈরির চেষ্টা (যথেষ্ট কম্বিনেশন না থাকলে লুপ আটকাতে safety limit রাখা হয়েছে)
+      let attempts = 0;
+      while (uniqueSet.size < 100 && attempts < 2000) {
+        uniqueSet.add(buildSinglePassword(randomLen, suffix));
+        attempts++;
+      }
+      while (uniqueSet.size < 100) {
+        uniqueSet.add(buildSinglePassword(randomLen, suffix) + "_" + uniqueSet.size);
+      }
+
+      passwords = Array.from(uniqueSet).slice(0, 100);
+      renderCards();
+    }
+
+    function renderCards() {
+      passwordGrid.innerHTML = "";
+      passwords.forEach((pw, index) => {
+        const card = document.createElement("div");
+        card.className = "pw-card";
+        card.title = "Click to copy";
+        card.innerHTML = `<span class="pw-num">#${index + 1}</span><span class="pw-val">${pw}</span>`;
+        card.addEventListener("click", () => {
+          copyToClipboard(pw, `Copied: ${pw}`);
+          card.classList.add("copied");
+          setTimeout(() => card.classList.remove("copied"), 650);
+        });
+        passwordGrid.appendChild(card);
+      });
+    }
+
+    autoModeBtn.addEventListener("click", () => {
+      isManual = false;
+      generatePasswords();
+      showToast("Auto Date চালু হয়েছে!");
+    });
+
+    manualModeBtn.addEventListener("click", () => {
+      isManual = true;
+      updateUIState();
+      dateSuffixInput.focus();
+      dateSuffixInput.select();
+    });
+
+    dateSuffixInput.addEventListener("input", () => {
+      if (!isManual) return;
+      generatePasswords();
+    });
+
+    generateBtn.addEventListener("click", () => {
+      generatePasswords();
+      showToast("১০০টি নতুন পাসওয়ার্ড তৈরি হয়েছে!");
+    });
+
+    copyAllBtn.addEventListener("click", () => {
+      if (!passwords.length) return;
+      copyToClipboard(passwords.join("\n"), "সব ১০০টি পাসওয়ার্ড কপি হয়েছে!");
+    });
+
+    // প্রথম লোডে পাসওয়ার্ড তৈরি
+    generatePasswords();
+  </script>
+</body>
+</html>
